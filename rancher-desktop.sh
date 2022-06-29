@@ -1,26 +1,5 @@
 #!/usr/bin/env bash
 
-COMMODORE_VERSION="v1.3.2"
-
-commodore() {
-  docker run \
-    --interactive=true \
-    --tty \
-    --rm \
-    --user="$(id -u)" \
-    --env COMMODORE_API_URL="http://host.docker.internal:$LIEUTENANT_PORT" \
-    --env COMMODORE_API_TOKEN="$LIEUTENANT_TOKEN" \
-    --env SSH_AUTH_SOCK=/tmp/ssh_agent.sock \
-    --volume "${SSH_AUTH_SOCK}:/tmp/ssh_agent.sock" \
-    --volume "${HOME}/.ssh/config:/app/.ssh/config:ro" \
-    --volume "${HOME}/.ssh/known_hosts:/app/.ssh/known_hosts:ro" \
-    --volume "${HOME}/.gitconfig:/app/.gitconfig:ro" \
-    --volume "${PWD}:/app/data" \
-    --workdir /app/data \
-    projectsyn/commodore:${COMMODORE_VERSION:=latest} \
-    $*
-}
-
 check_rancher_desktop() {
     RANCHER_DESKTOP_RUNNING=$(kubectl --context rancher-desktop get nodes | grep rancher-desktop)
     if [ -z "$RANCHER_DESKTOP_RUNNING" ]; then
@@ -76,7 +55,17 @@ check_variable "CLUSTER_ID" "A new cluster ID could not be registered."
 
 echo "===> Kickstart Commodore"
 echo "===> IMPORTANT: When prompted enter your SSH key password"
-commodore catalog compile "$CLUSTER_ID" --push
+kubectl --context docker-desktop -n lieutenant run commodore-shell \
+  --image=docker.io/projectsyn/commodore:v1.3.2 \
+  --env=COMMODORE_API_URL="http://lieutenant-api:$LIEUTENANT_PORT" \
+  --env=COMMODORE_API_TOKEN="$LIEUTENANT_TOKEN" \
+  --env=SSH_PRIVATE_KEY="$(cat ${COMMODORE_SSH_PRIVATE_KEY})" \
+  --env=CLUSTER_ID="$CLUSTER_ID" \
+  --env=GITLAB_ENDPOINT="$GITLAB_ENDPOINT" \
+  --tty --stdin --restart=Never --rm --wait \
+  --image-pull-policy=Always \
+  --command \
+  -- /usr/local/bin/entrypoint.sh bash -c "ssh-keyscan $GITLAB_ENDPOINT >> /app/.ssh/known_hosts; commodore catalog compile $CLUSTER_ID --push"
 
 echo "===> COMMODORE DONE"
 
