@@ -170,4 +170,4 @@ curl -H "$LIEUTENANT_AUTH" "$LIEUTENANT_URL/clusters" | jq
 kubectl -n lieutenant get cluster
 kubectl -n lieutenant get gitrepo
 
-echo "===> LIEUTENANT API READY"
+echo "===> LIEUTENANT API READY ON DOCKER DESKTOP"
