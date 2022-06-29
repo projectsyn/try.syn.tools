@@ -39,6 +39,20 @@ check_variable () {
     echo "===> OK: variable $1 set"
 }
 
+wait_for_token () {
+    echo "===> Waiting for valid bootstrap token"
+    EXPECTED="true"
+    COMMAND="kubectl --context docker-desktop -n lieutenant get cluster $1 -o jsonpath={.status.bootstrapToken.tokenValid}"
+    RESULT=$($COMMAND)
+    while [ "$RESULT" != "$EXPECTED" ]
+    do
+        echo "===> Not yet OK"
+        sleep 10s
+        RESULT=$($COMMAND)
+    done
+    echo "===> Bootstrap token OK"
+}
+
 # Rancher Desktop Kubernetes must be running
 check_rancher_desktop
 
