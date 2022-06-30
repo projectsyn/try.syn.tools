@@ -1,0 +1,32 @@
+= Scripts to install Project Syn
+
+== Requirements
+
+* `minikube`
+* `k3d`
+* `jq`
+* `curl`
+* A GitLab account
+
+== How to Use
+
+. Launch your Minikube cluster
++
+[source,bash]
+--
+minikube start --kubernetes-version=v1.23.8
+--
+
+. Launch your K3s cluster
++
+[source,bash]
+--
+k3d cluster create steward --image=rancher/k3s:v1.23.8-k3s1
+--
+
+. Run the `lieutenant.sh` script.
+. Run the `steward.sh` script.
+
+== Cleanup
+
+. Run the `delete.sh` script.
