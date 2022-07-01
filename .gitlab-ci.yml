@@ -1,21 +1,44 @@
+variables:
+  PROJECT_NAME: vshn-try-syn-tools
+  OC_IMAGE: docker.io/appuio/oc:v4.9
+  APPUIO_CLOUD_REGISTRY: registry.cloudscale-lpg-2.appuio.cloud
+  TRY_SYN_MAIN_IMAGE: ${APPUIO_CLOUD_REGISTRY}/vshn-try-syn-tools/vshn-try-syn-tools:latest
+
 stages:
   - build
+  - deploy
 
-.base:
+.build-docker:
   stage: build
   image: docker:stable
-  tags:
-    - dockerbuild
   services:
     - docker:dind
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-
-docker-build-master:
-  extends: .base
+  tags:
+    - dockerbuild
   script:
-    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
-    - docker push "$CI_REGISTRY_IMAGE"
+    - docker login -u gitlab-ci -p ${APPUIO_CLOUD_REGISTRY_TOKEN} ${APPUIO_CLOUD_REGISTRY}
+    - docker pull $TRY_SYN_MAIN_IMAGE || true
+    - docker build --cache-from $TRY_SYN_MAIN_IMAGE -t $TRY_SYN_MAIN_IMAGE -f deployment/main/Dockerfile .
+    - if [ ${CI_COMMIT_REF_NAME} == "master" ]; then docker push $TRY_SYN_MAIN_IMAGE; fi
+
+develop:build:
+  extends: .build-docker
+  except:
+    - master
+
+master:build:
+  extends: .build-docker
   only:
     - master
 
+master:deploy:
+  stage: deploy
+  image: $OC_IMAGE
+  environment:
+    name: production
+    url: https://try.syn.tools
+  script:
+    - oc -n ${PROJECT_NAME} apply -f deployment/try-syn-tools.yaml
+    - oc -n ${PROJECT_NAME} rollout latest dc/vshn-try-syn-tools
+  only:
+    - master

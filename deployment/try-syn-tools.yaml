@@ -52,7 +52,7 @@ spec:
     spec:
       containers:
         - name: main
-          image: registry.cloudscale-lpg-2.appuio.cloud/vshn-docs/vshn-try-syn-tools:latest
+          image: registry.cloudscale-lpg-2.appuio.cloud/vshn-try-syn-tools/vshn-try-syn-tools:latest
           readinessProbe:
             httpGet:
               path: "/"
