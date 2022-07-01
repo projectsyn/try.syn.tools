@@ -154,7 +154,5 @@ kubectl --context $LIEUTENANT_CONTEXT -n lieutenant patch tenant "$TENANT_ID" --
 echo "===> Retrieve the registered tenants via API and directly on the cluster"
 curl --silent -H "$LIEUTENANT_AUTH" "${LIEUTENANT_URL}/tenants" | jq
 kubectl --context $LIEUTENANT_CONTEXT -n lieutenant get tenants
-kubectl --context $LIEUTENANT_CONTEXT -n lieutenant get clusters
-kubectl --context $LIEUTENANT_CONTEXT -n lieutenant get gitrepos
 
 echo "===> LIEUTENANT API READY ON $LIEUTENANT_CONTEXT"

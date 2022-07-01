@@ -55,12 +55,6 @@ echo "===> Register this cluster via the API"
 CLUSTER_ID=$(curl -s -H "$LIEUTENANT_AUTH" -H "Content-Type: application/json" -X POST --data "{ \"tenant\": \"${TENANT_ID}\", \"displayName\": \"Project Syn Cluster\", \"facts\": { \"cloud\": \"local\", \"distribution\": \"k3s\", \"region\": \"local\" }, \"gitRepo\": { \"url\": \"ssh://git@${GITLAB_ENDPOINT}/${GITLAB_USERNAME}/project-syn-cluster.git\" } }" "${LIEUTENANT_URL}/clusters" | jq -r ".id")
 check_variable "CLUSTER_ID" "A new cluster ID could not be registered."
 
-echo "===> Retrieve the registered clusters via API and directly on the cluster"
-curl --silent -H "$LIEUTENANT_AUTH" "$LIEUTENANT_URL/clusters" | jq
-kubectl --context $LIEUTENANT_CONTEXT -n lieutenant get tenants
-kubectl --context $LIEUTENANT_CONTEXT -n lieutenant get clusters
-kubectl --context $LIEUTENANT_CONTEXT -n lieutenant get gitrepos
-
 echo "===> Check the validity of the bootstrap token"
 wait_for_token "$CLUSTER_ID"
 
@@ -70,6 +64,10 @@ echo "===> Steward install URL: $STEWARD_INSTALL"
 
 echo "===> Install Steward in the local k3s cluster"
 kubectl --context $STEWARD_CONTEXT apply -f "$STEWARD_INSTALL"
+
+echo "===> Retrieve the registered clusters via API and directly on the cluster"
+curl --silent -H "$LIEUTENANT_AUTH" "$LIEUTENANT_URL/clusters" | jq
+kubectl --context $LIEUTENANT_CONTEXT -n lieutenant get clusters
 
 echo "===> Check that Steward is running and that Argo CD Pods are appearing"
 kubectl --context $STEWARD_CONTEXT -n syn get pod
