@@ -1,4 +1,6 @@
-= Scripts to install Project Syn
+= Scripts to Try Project Syn
+
+This project contains scripts hosted at https://try.syn.tools to try Project Syn the easiest way possible.
 
 == Requirements
 
@@ -6,9 +8,16 @@
 * `k3d`
 * `jq`
 * `curl`
-* A GitLab account
+* A GitLab account.
 
 == How to Use
+
+. Check requirements:
++
+[source,bash]
+--
+curl -fsL https://try.syn.tools/requirements.sh | bash
+--
 
 . Launch your Minikube cluster
 +
@@ -24,9 +33,25 @@ minikube start --kubernetes-version=v1.23.8
 k3d cluster create steward --image=rancher/k3s:v1.23.8-k3s1
 --
 
-. Run the `lieutenant.sh` script.
-. Run the `steward.sh` script.
+. Run the `lieutenant.sh` script:
++
+[source,bash]
+--
+curl -fsL https://try.syn.tools | bash
+--
+
+. Run the `steward.sh` script:
++
+[source,bash]
+--
+curl -fsL https://try.syn.tools/steward.sh | bash
+--
 
 == Cleanup
 
-. Run the `delete.sh` script.
+. Cleanup at the end:
++
+[source,bash]
+--
+curl -fsL https://try.syn.tools/cleanup.sh | bash
+--
