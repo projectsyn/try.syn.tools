@@ -18,7 +18,7 @@ stages:
   script:
     - docker login -u gitlab-ci -p ${APPUIO_CLOUD_REGISTRY_TOKEN} ${APPUIO_CLOUD_REGISTRY}
     - docker pull $TRY_SYN_MAIN_IMAGE || true
-    - docker build --cache-from $TRY_SYN_MAIN_IMAGE -t $TRY_SYN_MAIN_IMAGE -f deployment/main/Dockerfile .
+    - docker build --cache-from $TRY_SYN_MAIN_IMAGE -t $TRY_SYN_MAIN_IMAGE -f deployment/Dockerfile .
     - if [ ${CI_COMMIT_REF_NAME} == "master" ]; then docker push $TRY_SYN_MAIN_IMAGE; fi
 
 develop:build:
