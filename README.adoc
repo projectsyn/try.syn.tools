@@ -5,7 +5,6 @@ This project contains scripts hosted at https://try.syn.tools to try Project Syn
 == Requirements
 
 * `kubectl`
-* `minikube`
 * `k3d`
 * `jq`
 * `curl`
@@ -20,28 +19,22 @@ This project contains scripts hosted at https://try.syn.tools to try Project Syn
 curl -fsL https://try.syn.tools/requirements | bash
 --
 
-. Launch your Minikube cluster
+. Launch both K3s clusters
 +
 [source,bash]
 --
-minikube start --kubernetes-version=v1.23.8
+k3d cluster create lieutenant --port "35777:8080@loadbalancer" --image=rancher/k3s:v1.23.8-k3s1 && \
+k3d cluster create steward  --port "35778:8080@loadbalancer" --image=rancher/k3s:v1.23.8-k3s1
 --
 
-. Launch your K3s cluster
-+
-[source,bash]
---
-k3d cluster create steward --image=rancher/k3s:v1.23.8-k3s1
---
-
-. Install Lieutenant in Minikube:
+. Install Lieutenant in the first cluster:
 +
 [source,bash]
 --
 curl -fsL https://try.syn.tools | bash
 --
 
-. Install Steward in K3s script:
+. Install Steward in the second cluster:
 +
 [source,bash]
 --

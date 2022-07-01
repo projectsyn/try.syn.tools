@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-LIEUTENANT_CONTEXT=minikube
+LIEUTENANT_CONTEXT=k3d-lieutenant
 STEWARD_CONTEXT=k3d-steward
 
 check_kubernetes_context() {
@@ -23,7 +23,7 @@ check_variable () {
 }
 
 # Clusters must be running
-check_kubernetes_context $LIEUTENANT_CONTEXT "Start Minikube with 'minikube start --kubernetes-version=v1.23.8'"
+check_kubernetes_context $LIEUTENANT_CONTEXT "Start K3s with 'k3d cluster create lieutenant --image=rancher/k3s:v1.23.8-k3s1'"
 check_kubernetes_context $STEWARD_CONTEXT "Start K3s with 'k3d cluster create steward --image=rancher/k3s:v1.23.8-k3s1'"
 
 echo "===> Find Tenant ID"
@@ -39,6 +39,6 @@ done
 echo "===> Removing tenant"
 kubectl --context $LIEUTENANT_CONTEXT -n lieutenant delete tenant "$TENANT_ID"
 
-echo "===> Wait a few seconds for the removal of GitLab repositories, and then"
-echo "===> remove the Minikube cluster using the 'minikube delete' command and"
-echo "===> remove the K3s cluster using the 'k3d cluster delete steward' command."
+echo "===> Wait a few seconds for the removal of GitLab repositories."
+echo "===> Then remove the K3s clusters using the command"
+echo "===> 'k3d cluster delete --all'"

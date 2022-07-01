@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-LIEUTENANT_CONTEXT=minikube
+LIEUTENANT_CONTEXT=k3d-lieutenant
 STEWARD_CONTEXT=k3d-steward
+LIEUTENANT_PORT=35777
+ARGO_CD_PORT=35778
 
 check_kubernetes_context() {
     CONTEXT_AVAILABLE=$(kubectl --context "$1" get nodes | grep "$1")
@@ -37,10 +39,10 @@ wait_for_token () {
 }
 
 # Clusters must be running
-check_kubernetes_context $LIEUTENANT_CONTEXT "Start Minikube with 'minikube start --kubernetes-version=v1.23.8'"
+check_kubernetes_context $LIEUTENANT_CONTEXT "Start K3s with 'k3d cluster create lieutenant --image=rancher/k3s:v1.23.8-k3s1'"
 check_kubernetes_context $STEWARD_CONTEXT "Start K3s with 'k3d cluster create steward --image=rancher/k3s:v1.23.8-k3s1'"
 
-LIEUTENANT_URL=$(minikube service lieutenant-api -n lieutenant --url)
+LIEUTENANT_URL=http://host.k3d.internal:$LIEUTENANT_PORT
 check_variable "LIEUTENANT_URL" "The Lieutenant API should be accessible."
 
 TENANT_ID=$(kubectl --context $LIEUTENANT_CONTEXT --namespace lieutenant get tenant | grep t- | awk 'NR==1{print $1}')
@@ -71,6 +73,34 @@ kubectl --context $LIEUTENANT_CONTEXT -n lieutenant get clusters
 
 echo "===> Check that Steward is running and that Argo CD Pods are appearing"
 kubectl --context $STEWARD_CONTEXT -n syn get pod
+
+echo "===> Add Ingress for the Argo CD service"
+kubectl --context $STEWARD_CONTEXT -n syn apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: syn
+  name: argocd-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              number: 8080
+EOF
+
+echo "===> Expose the Argo CD service with this command:"
+echo "===> 'kubectl --context $STEWARD_CONTEXT -n syn expose deployment argocd-server --type=LoadBalancer --port=8080'"
+echo "===> Access the Argo CD service at http://localhost:$ARGO_CD_PORT"
+echo "===> Use the 'admin' user and retrieve the password using:"
+echo "===> kubectl --context $STEWARD_CONTEXT -n syn get secret steward -o json | jq -r .data.token | base64 --decode"
 
 echo ""
 echo "===> STEWARD READY ON $STEWARD_CONTEXT"

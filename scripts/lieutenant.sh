@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-LIEUTENANT_CONTEXT=minikube
+LIEUTENANT_CONTEXT=k3d-lieutenant
+LIEUTENANT_PORT=35777
 
 check_kubernetes_context() {
     CONTEXT_AVAILABLE=$(kubectl --context $LIEUTENANT_CONTEXT --context "$1" get nodes | grep "$1")
@@ -42,7 +43,7 @@ check_variable "GITLAB_ENDPOINT" "If you are using a private GitLab instance, us
 check_variable "GITLAB_USERNAME" "Create a variable with your GitLab instance (or gitlab.com) username."
 
 # Cluster must be running
-check_kubernetes_context $LIEUTENANT_CONTEXT "Start Minikube with 'minikube start --kubernetes-version=v1.23.8'"
+check_kubernetes_context $LIEUTENANT_CONTEXT "Start K3s with 'k3d cluster create lieutenant --image=rancher/k3s:v1.23.8-k3s1'"
 
 echo "===> Creating 'lieutenant' namespace"
 kubectl --context $LIEUTENANT_CONTEXT create namespace lieutenant
@@ -67,11 +68,33 @@ echo "===> Lieutenant API configuration"
 kubectl --context $LIEUTENANT_CONTEXT -n lieutenant set env deployment/lieutenant-api -c lieutenant-api \
   DEFAULT_API_SECRET_REF_NAME=gitlab-com
 
-echo "===> Delete the default ClusterIP service and re-create it as a NodePort"
+echo "===> Replace the Lieutenant service"
 kubectl --context $LIEUTENANT_CONTEXT -n lieutenant delete svc lieutenant-api
-kubectl --context $LIEUTENANT_CONTEXT -n lieutenant expose deployment lieutenant-api --type=NodePort
+kubectl --context $LIEUTENANT_CONTEXT -n lieutenant expose deployment lieutenant-api --type=LoadBalancer --port=8080
 
-LIEUTENANT_URL=$(minikube service lieutenant-api -n lieutenant --url)
+echo "===> Expose the Lieutenant service"
+kubectl --context $LIEUTENANT_CONTEXT -n lieutenant apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: lieutenant
+  name: lieutenant-ingress
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: lieutenant-api
+            port:
+              number: 8080
+EOF
+
+LIEUTENANT_URL=http://host.k3d.internal:$LIEUTENANT_PORT
 echo "===> Lieutenant API: $LIEUTENANT_URL"
 
 wait_for_lieutenant "$LIEUTENANT_URL/healthz"
