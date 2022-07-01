@@ -4,6 +4,7 @@ This project contains scripts hosted at https://try.syn.tools to try Project Syn
 
 == Requirements
 
+* `kubectl`
 * `minikube`
 * `k3d`
 * `jq`

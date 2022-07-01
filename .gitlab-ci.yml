@@ -21,11 +21,6 @@ stages:
     - docker build --cache-from $TRY_SYN_MAIN_IMAGE -t $TRY_SYN_MAIN_IMAGE -f deployment/Dockerfile .
     - if [ ${CI_COMMIT_REF_NAME} == "master" ]; then docker push $TRY_SYN_MAIN_IMAGE; fi
 
-develop:build:
-  extends: .build-docker
-  except:
-    - master
-
 master:build:
   extends: .build-docker
   only:
