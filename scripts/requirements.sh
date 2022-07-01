@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 KUBECTL_VERSION=$(kubectl version --client=true)
-echo "$KUBECTL_VERSION"
+echo "kubectl: $KUBECTL_VERSION"
 
 MINIKUBE_VERSION=$(minikube version | grep version)
 echo "$MINIKUBE_VERSION"
