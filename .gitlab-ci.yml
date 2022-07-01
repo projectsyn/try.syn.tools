@@ -4,6 +4,8 @@ stages:
 .base:
   stage: build
   image: docker:stable
+  tags:
+    dockerbuild
   services:
     - docker:dind
   before_script:
