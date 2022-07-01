@@ -4,7 +4,7 @@ LIEUTENANT_CONTEXT=k3d-lieutenant
 LIEUTENANT_PORT=35777
 
 check_kubernetes_context() {
-    CONTEXT_AVAILABLE=$(kubectl --context $LIEUTENANT_CONTEXT --context "$1" get nodes | grep "$1")
+    CONTEXT_AVAILABLE=$(kubectl --context "$1" get nodes | grep "$1")
     if [ -z "$CONTEXT_AVAILABLE" ]; then
         echo "===> ERROR: Kubernetes context $1 is not available"
         echo "===> $2"
