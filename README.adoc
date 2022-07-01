@@ -17,7 +17,7 @@ This project contains scripts hosted at https://try.syn.tools to try Project Syn
 +
 [source,bash]
 --
-curl -fsL https://try.syn.tools/requirements.sh | bash
+curl -fsL https://try.syn.tools/requirements | bash
 --
 
 . Launch your Minikube cluster
@@ -34,18 +34,18 @@ minikube start --kubernetes-version=v1.23.8
 k3d cluster create steward --image=rancher/k3s:v1.23.8-k3s1
 --
 
-. Run the `lieutenant.sh` script:
+. Install Lieutenant in Minikube:
 +
 [source,bash]
 --
 curl -fsL https://try.syn.tools | bash
 --
 
-. Run the `steward.sh` script:
+. Install Steward in K3s script:
 +
 [source,bash]
 --
-curl -fsL https://try.syn.tools/steward.sh | bash
+curl -fsL https://try.syn.tools/steward | bash
 --
 
 == Cleanup
@@ -54,5 +54,5 @@ curl -fsL https://try.syn.tools/steward.sh | bash
 +
 [source,bash]
 --
-curl -fsL https://try.syn.tools/cleanup.sh | bash
+curl -fsL https://try.syn.tools/cleanup | bash
 --
