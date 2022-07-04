@@ -43,7 +43,7 @@ check_variable "GITLAB_ENDPOINT" "If you are using a private GitLab instance, us
 check_variable "GITLAB_USERNAME" "Create a variable with your GitLab instance (or gitlab.com) username."
 
 # Cluster must be running
-check_kubernetes_context $LIEUTENANT_CONTEXT "Start K3s with 'k3d cluster create lieutenant --image=rancher/k3s:v1.23.8-k3s1'"
+check_kubernetes_context $LIEUTENANT_CONTEXT "Start K3s with 'k3d cluster create lieutenant --port \"35777:8080@loadbalancer\" --image=rancher/k3s:v1.23.8-k3s1'"
 
 echo "===> Creating 'lieutenant' namespace"
 kubectl --context $LIEUTENANT_CONTEXT create namespace lieutenant
@@ -183,4 +183,4 @@ echo "===> Open the https://$GITLAB_ENDPOINT/$GITLAB_USERNAME/project-syn-tenant
 echo "===> and see the Git repository of your tenant."
 
 echo ""
-echo "===> LIEUTENANT API READY ON $LIEUTENANT_CONTEXT"
+echo "===> LIEUTENANT READY ON $LIEUTENANT_CONTEXT"

@@ -41,6 +41,7 @@ check_variable "LIEUTENANT_TOKEN" "The Lieutenant API should be accessible, and 
 CLUSTER_ID=$(kubectl --context $LIEUTENANT_CONTEXT get clusters -n lieutenant -o jsonpath="{.items[0].metadata.name}")
 check_variable "CLUSTER_ID" "The Cluster ID must exist."
 
+echo ""
 echo "===> Commodore will compile and push the settings of the $STEWARD_CONTEXT cluster"
 echo "===> IMPORTANT: When prompted with 'If you don't see a command prompt, try pressing enter' enter your SSH key password instead."
 kubectl --context $LIEUTENANT_CONTEXT -n lieutenant run commodore-shell \
@@ -54,6 +55,11 @@ kubectl --context $LIEUTENANT_CONTEXT -n lieutenant run commodore-shell \
   --image-pull-policy=Always \
   --command \
   -- /usr/local/bin/entrypoint.sh bash -c "ssh-keyscan $GITLAB_ENDPOINT >> /app/.ssh/known_hosts; commodore catalog compile $CLUSTER_ID --push"
+
+
+echo ""
+echo "===> Delete Commodore pod"
+kubectl --context $LIEUTENANT_CONTEXT -n lieutenant delete pod commodore-shell
 
 echo ""
 echo "===> Open the https://$GITLAB_ENDPOINT/$GITLAB_USERNAME/project-syn-cluster project in GitLab"

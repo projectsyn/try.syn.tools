@@ -38,9 +38,24 @@ wait_for_token () {
     echo "===> Bootstrap token OK"
 }
 
+wait_for_steward() {
+    echo "===> Waiting for Steward in context $STEWARD_CONTEXT"
+    EXPECTED="True True True True True"
+    COMMAND=(kubectl --context "$STEWARD_CONTEXT" -n syn get pods -o jsonpath="{.items[*].status.conditions[?(@.type=='Ready')].status}")
+    RESULT=$("${COMMAND[@]}")
+    while [ "$RESULT" != "$EXPECTED" ]
+    do
+        echo "===> Not yet OK"
+        kubectl --context $STEWARD_CONTEXT -n syn get pods
+        sleep 5s
+        RESULT=$("${COMMAND[@]}")
+    done
+    echo "===> OK"
+}
+
 # Clusters must be running
 check_kubernetes_context $LIEUTENANT_CONTEXT "Start K3s with 'k3d cluster create lieutenant --image=rancher/k3s:v1.23.8-k3s1'"
-check_kubernetes_context $STEWARD_CONTEXT "Start K3s with 'k3d cluster create steward --image=rancher/k3s:v1.23.8-k3s1'"
+check_kubernetes_context $STEWARD_CONTEXT "Start K3s with 'k3d cluster create steward  --port \"35778:8080@loadbalancer\" --image=rancher/k3s:v1.23.8-k3s1'"
 
 LIEUTENANT_URL=http://host.k3d.internal:$LIEUTENANT_PORT
 check_variable "LIEUTENANT_URL" "The Lieutenant API should be accessible."
@@ -71,8 +86,8 @@ echo "===> Retrieve the registered clusters via API and directly on the cluster"
 curl --silent -H "$LIEUTENANT_AUTH" "$LIEUTENANT_URL/clusters" | jq
 kubectl --context $LIEUTENANT_CONTEXT -n lieutenant get clusters
 
-echo "===> Check that Steward is running and that Argo CD Pods are appearing"
-kubectl --context $STEWARD_CONTEXT -n syn get pod
+echo "===> Check that Steward is running and that Argo CD Pods are all 'Ready'"
+wait_for_steward
 
 echo "===> Add Ingress for the Argo CD service"
 kubectl --context $STEWARD_CONTEXT -n syn apply -f - <<EOF
