@@ -178,4 +178,9 @@ echo "===> Retrieve the registered tenants via API and directly on the cluster"
 curl --silent -H "$LIEUTENANT_AUTH" "${LIEUTENANT_URL}/tenants" | jq
 kubectl --context $LIEUTENANT_CONTEXT -n lieutenant get tenants
 
+echo ""
+echo "===> Open the https://$GITLAB_ENDPOINT/$GITLAB_USERNAME/project-syn-tenant project in GitLab"
+echo "===> and see the Git repository of your tenant."
+
+echo ""
 echo "===> LIEUTENANT API READY ON $LIEUTENANT_CONTEXT"

@@ -96,11 +96,16 @@ spec:
               number: 8080
 EOF
 
+echo ""
 echo "===> Expose the Argo CD service with this command:"
 echo "===> 'kubectl --context $STEWARD_CONTEXT -n syn expose deployment argocd-server --type=LoadBalancer --port=8080'"
 echo "===> Access the Argo CD service at http://localhost:$ARGO_CD_PORT"
 echo "===> Use the 'admin' user and retrieve the password using:"
 echo "===> kubectl --context $STEWARD_CONTEXT -n syn get secret steward -o json | jq -r .data.token | base64 --decode"
+
+echo ""
+echo "===> Open the https://$GITLAB_ENDPOINT/$GITLAB_USERNAME/project-syn-cluster project in GitLab"
+echo "===> and see the full catalog of objects and settings of your cluster."
 
 echo ""
 echo "===> STEWARD READY ON $STEWARD_CONTEXT"
