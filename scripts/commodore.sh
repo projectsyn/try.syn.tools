@@ -56,11 +56,6 @@ kubectl --context $LIEUTENANT_CONTEXT -n lieutenant run commodore-shell \
   --command \
   -- /usr/local/bin/entrypoint.sh bash -c "ssh-keyscan $GITLAB_ENDPOINT >> /app/.ssh/known_hosts; commodore catalog compile $CLUSTER_ID --push"
 
-
-echo ""
-echo "===> Delete Commodore pod"
-kubectl --context $LIEUTENANT_CONTEXT -n lieutenant delete pod commodore-shell
-
 echo ""
 echo "===> Open the https://$GITLAB_ENDPOINT/$GITLAB_USERNAME/project-syn-cluster project in GitLab"
 echo "===> and see the full catalog of objects and settings of your cluster."
