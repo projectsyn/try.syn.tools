@@ -42,7 +42,7 @@ CLUSTER_ID=$(kubectl --context $LIEUTENANT_CONTEXT get clusters -n lieutenant -o
 check_variable "CLUSTER_ID" "The Cluster ID must exist."
 
 echo "===> Commodore will compile and push the settings of the $STEWARD_CONTEXT cluster"
-echo "===> IMPORTANT: When prompted with 'If you don't see a command prompt, try pressing enter'… enter your SSH key password instead."
+echo "===> IMPORTANT: When prompted with 'If you don't see a command prompt, try pressing enter' enter your SSH key password instead."
 kubectl --context $LIEUTENANT_CONTEXT -n lieutenant run commodore-shell \
   --image=docker.io/projectsyn/commodore:v1.3.2 \
   --env=COMMODORE_API_URL="$LIEUTENANT_URL" \
