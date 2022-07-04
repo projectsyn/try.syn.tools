@@ -24,8 +24,8 @@ check_variable () {
 }
 
 # Clusters must be running
-check_kubernetes_context $LIEUTENANT_CONTEXT "Start K3s with 'k3d cluster create lieutenant --image=rancher/k3s:v1.23.8-k3s1'"
-check_kubernetes_context $STEWARD_CONTEXT "Start K3s with 'k3d cluster create steward --image=rancher/k3s:v1.23.8-k3s1'"
+check_kubernetes_context $LIEUTENANT_CONTEXT "Start K3s with 'k3d cluster create lieutenant --port \"35777:8080@loadbalancer\" --image=rancher/k3s:v1.23.8-k3s1'"
+check_kubernetes_context $STEWARD_CONTEXT "Start K3s with 'k3d cluster create steward  --port \"35778:8080@loadbalancer\" --image=rancher/k3s:v1.23.8-k3s1'"
 
 # Variables must be set
 check_variable "GITLAB_ENDPOINT" "If you are using a private GitLab instance, use its URL; otherwise, use 'export GITLAB_ENDPOINT=gitlab.com' instead."
