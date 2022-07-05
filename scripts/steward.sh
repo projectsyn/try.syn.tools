@@ -21,7 +21,7 @@ check_variable () {
         echo "===> $2"
         exit 1
     fi
-    echo "===> OK: variable $1 set to ${!1}"
+    echo "===> OK: variable $1 set"
 }
 
 wait_for_token () {
