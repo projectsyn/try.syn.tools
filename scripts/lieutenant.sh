@@ -30,8 +30,8 @@ wait_for_lieutenant() {
     RESULT=$($COMMAND)
     while [ "$RESULT" != "$EXPECTED" ]
     do
-        echo "===> Not yet OK, waiting 10 seconds"
-        sleep 10s
+        echo "===> Not yet OK, waiting 20 seconds"
+        sleep 20s
         RESULT=$($COMMAND)
     done
     echo "===> OK"
