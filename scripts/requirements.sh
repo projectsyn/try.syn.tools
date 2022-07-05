@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-KUBECTL_VERSION=$(kubectl version --client=true)
+KUBECTL_VERSION=$(kubectl version --short=true --client=true)
 echo "kubectl: $KUBECTL_VERSION"
 
 K3D_VERSION=$(k3d version | grep version -m 1)
