@@ -31,8 +31,8 @@ wait_for_token () {
     RESULT=$($COMMAND)
     while [ "$RESULT" != "$EXPECTED" ]
     do
-        echo "===> Not yet OK, waiting 30 seconds"
-        sleep 30s
+        echo "===> Not yet OK, waiting 5 seconds"
+        sleep 5s
         RESULT=$($COMMAND)
     done
     echo "===> Bootstrap token OK"
