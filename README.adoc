@@ -27,6 +27,13 @@ k3d cluster create lieutenant --port "35777:8080@loadbalancer" --image=rancher/k
 k3d cluster create steward  --port "35778:8080@loadbalancer" --image=rancher/k3s:v1.23.8-k3s1
 --
 
+. Check requirements:
++
+[source,bash]
+--
+curl -fsL https://try.syn.tools/requirements | bash
+--
+
 . Install Lieutenant in the first cluster:
 +
 [source,bash]
@@ -39,6 +46,13 @@ curl -fsL https://try.syn.tools/lieutenant | bash
 [source,bash]
 --
 curl -fsL https://try.syn.tools/steward | bash
+--
+
+. Source the Commodore command in your environment:
++
+[source,bash]
+--
+source <(curl -fsL https://try.syn.tools/commodore)
 --
 
 == Cleanup
