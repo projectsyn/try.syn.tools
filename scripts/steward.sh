@@ -31,8 +31,8 @@ wait_for_token () {
     RESULT=$($COMMAND)
     while [ "$RESULT" != "$EXPECTED" ]
     do
-        echo "===> Not yet OK"
-        sleep 10s
+        echo "===> Not yet OK, waiting 30 seconds"
+        sleep 30s
         RESULT=$($COMMAND)
     done
     echo "===> Bootstrap token OK"
@@ -45,9 +45,9 @@ wait_for_steward() {
     RESULT=$("${COMMAND[@]}")
     while [ "$RESULT" != "$EXPECTED" ]
     do
-        echo "===> Not yet OK"
+        echo "===> Not yet OK, waiting 10 seconds"
         kubectl --context $STEWARD_CONTEXT -n syn get pods
-        sleep 5s
+        sleep 10s
         RESULT=$("${COMMAND[@]}")
     done
     echo "===> OK"
