@@ -31,7 +31,7 @@ k3d cluster create steward  --port "35778:8080@loadbalancer" --image=rancher/k3s
 +
 [source,bash]
 --
-curl -fsL https://try.syn.tools | bash
+curl -fsL https://try.syn.tools/lieutenant | bash
 --
 
 . Install Steward in the second cluster:
