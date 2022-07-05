@@ -45,9 +45,9 @@ wait_for_steward() {
     RESULT=$("${COMMAND[@]}")
     while [ "$RESULT" != "$EXPECTED" ]
     do
-        echo "===> Not yet OK, waiting 10 seconds"
+        echo "===> Not yet OK, waiting 30 seconds"
         kubectl --context $STEWARD_CONTEXT -n syn get pods
-        sleep 10s
+        sleep 30s
         RESULT=$("${COMMAND[@]}")
     done
     echo "===> OK"
